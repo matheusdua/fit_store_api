@@ -5,7 +5,6 @@ class ProdutoController {
         try {
             const busca = req.query.busca || '';
             const produtos = await ProdutoService.getAll(busca);
-
             res.status(200).json(produtos);
         } catch (error) {
             next(error);
@@ -16,23 +15,16 @@ class ProdutoController {
         try {
             const { id } = req.params;
             const produto = await ProdutoService.getById(id);
-
             res.status(200).json(produto);
         } catch (error) {
             next(error);
         }
     }
 
-    static async create(req, res, next) {
+static async create(req, res, next) {
         try {
             const dados = req.body;
-            const idSolicitante = req.headers['funcionario'];
-
-            if (!idSolicitante) {
-                const error = new Error('Acesso negado: ID do funcionário obrigatório no header (funcionario).');
-                error.statusCode = 401;
-                throw error;
-            }
+            const idSolicitante = req.usuarioAutenticado;
 
             const novoProduto = await ProdutoService.create(dados, idSolicitante);
             res.status(201).json(novoProduto);

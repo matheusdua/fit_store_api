@@ -7,7 +7,7 @@
       "categoria": "Calças",
       "tamanho": "M",
       "preco": 119.9,
-      "estoque": 8,
+      "estoque": 15,
       "cadastradoPor": 1,
       "ativo": true
     },
@@ -19,8 +19,8 @@
       "tamanho": "P",
       "preco": 59.9,
       "estoque": 0,
-      "cadastradoPor": 1,
-      "ativo": false
+      "cadastradoPor": 2,
+      "ativo": true
     },
     {
       "id": 3,
@@ -30,7 +30,7 @@
       "tamanho": "G",
       "preco": 75,
       "estoque": 5,
-      "cadastradoPor": 2,
+      "cadastradoPor": 3,
       "ativo": true
     },
     {
@@ -41,7 +41,7 @@
       "tamanho": "G",
       "preco": 45,
       "estoque": 20,
-      "cadastradoPor": 3,
+      "cadastradoPor": 2,
       "ativo": true
     },
     {
@@ -51,7 +51,7 @@
       "categoria": "Camisetas",
       "tamanho": "M",
       "preco": 49.9,
-      "estoque": 15,
+      "estoque": 12,
       "cadastradoPor": 1,
       "ativo": true
     },
@@ -63,7 +63,7 @@
       "tamanho": "GG",
       "preco": 89.9,
       "estoque": 0,
-      "cadastradoPor": 2,
+      "cadastradoPor": 3,
       "ativo": true
     },
     {
@@ -74,7 +74,7 @@
       "tamanho": "G",
       "preco": 159.9,
       "estoque": 5,
-      "cadastradoPor": 3,
+      "cadastradoPor": 1,
       "ativo": false
     },
     {
@@ -85,7 +85,7 @@
       "tamanho": "U",
       "preco": 29.9,
       "estoque": 30,
-      "cadastradoPor": 4,
+      "cadastradoPor": 2,
       "ativo": true
     },
     {
@@ -96,8 +96,8 @@
       "tamanho": "P",
       "preco": 149.9,
       "estoque": 2,
-      "ativo": true,
-      "cadastradoPor": 1
+      "cadastradoPor": 1,
+      "ativo": true
     },
     {
       "id": 10,
@@ -107,7 +107,7 @@
       "tamanho": "M",
       "preco": 79.9,
       "estoque": 8,
-      "cadastradoPor": 2,
+      "cadastradoPor": 3,
       "ativo": true
     },
     {
@@ -118,8 +118,8 @@
       "tamanho": "GG",
       "preco": 189,
       "estoque": 4,
-      "ativo": true,
-      "cadastradoPor": 3
+      "cadastradoPor": 2,
+      "ativo": true
     },
     {
       "id": 12,
@@ -129,19 +129,19 @@
       "tamanho": "U",
       "preco": 65,
       "estoque": 12,
-      "cadastradoPor": 4,
+      "cadastradoPor": 3,
       "ativo": true
     },
     {
       "id": 13,
-      "ativo": false,
       "referencia": "COL-OLD-01",
       "nome": "Legging Vintage 2022",
       "categoria": "Calças",
       "tamanho": "P",
       "preco": 40,
       "estoque": 5,
-      "cadastradoPor": 1
+      "cadastradoPor": 1,
+      "ativo": false
     }
   ],
   "funcionarios": [
@@ -150,13 +150,15 @@
       "nome": "Matheus Felipe",
       "email": "matheus@fitstore.com",
       "cargo": "Gerente",
-      "ativo": true
+      "ativo": true,
+      "senha": "123"
     },
     {
       "id": 2,
       "nome": "Ana Clara",
       "email": "ana@fitstore.com",
-      "cargo": "Vendedora",
+      "cargo": "Vendedor",
+      "senha": "456",
       "ativo": true
     },
     {
@@ -164,6 +166,7 @@
       "nome": "João Carlos",
       "email": "joao@fitstore.com",
       "cargo": "Vendedor",
+      "senha": "789",
       "ativo": true
     },
     {
@@ -171,6 +174,7 @@
       "nome": "Lucas Estagiário",
       "email": "lucas@fitstore.com",
       "cargo": "Estagiário",
+      "senha": "123",
       "ativo": false
     }
   ]

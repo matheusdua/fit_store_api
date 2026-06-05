@@ -36,20 +36,6 @@ class ProdutoService {
     }
 
     static async create(dados, idSolicitante) {
-        const funcionario = await FuncionarioRepository.findById(idSolicitante);
-
-        if (!funcionario) {
-            const error = new Error('Funcionário solicitante não encontrado no sistema.');
-            error.statusCode = 404;
-            throw error;
-        }
-
-        if (!funcionario.ativo) {
-            const error = new Error('Funcionários inativos não podem cadastrar produtos.');
-            error.statusCode = 403;
-            throw error;
-        }
-
         const produtos = await ProdutoRepository.findAll();
 
         const referenciaExiste = produtos.find(p => p.referencia === dados.referencia);
@@ -71,6 +57,7 @@ class ProdutoService {
         const novoProduto = await ProdutoRepository.create(dados);
         return new ProdutoResponseDTO(novoProduto);
     }
+
 
     static async update(id, dados) {
         const produtoAtual = await ProdutoRepository.findById(id);

@@ -1,6 +1,10 @@
+import 'dotenv/config'; 
+
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import authRoutes from './routes/auth.routes.js';
 import produtoRoutes from './routes/produto.routes.js';
 import funcionarioRoutes from './routes/funcionario.routes.js'
 import webRoutes from './routes/web.routes.js';
@@ -22,7 +26,7 @@ const logger = (req, res, next) => {
 };
 app.use(logger);
 
-
+app.use('/api/auth', authRoutes);
 app.use('/api', produtoRoutes);
 app.use('/api/funcionarios', funcionarioRoutes);
 app.use('/', webRoutes);

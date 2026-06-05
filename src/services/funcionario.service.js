@@ -39,28 +39,15 @@ class FuncionarioService {
 
     static async atualizar(id, dados, idSolicitante) {
         const funcionarioAlvo = await FuncionarioRepository.findById(id);
-        const solicitante = await FuncionarioRepository.findById(idSolicitante);
 
-        if (!funcionarioAlvo || !solicitante) {
+        if (!funcionarioAlvo) {
             const error = new Error('Funcionário não encontrado.');
             error.statusCode = 404;
             throw error;
         }
 
-        if (!solicitante.ativo) {
-            const error = new Error('Funcionários inativos não podem realizar alterações.');
-            error.statusCode = 403;
-            throw error;
-        }
-
-        if (dados.cargo && id === Number(idSolicitante)) {
+        if (dados.cargo && Number(id) === Number(idSolicitante)) {
             const error = new Error('Não é permitido alterar o próprio cargo.');
-            error.statusCode = 403;
-            throw error;
-        }
-
-        if (dados.cargo && solicitante.cargo !== 'Gerente') {
-            const error = new Error('Apenas gerentes podem alterar cargos na equipe.');
             error.statusCode = 403;
             throw error;
         }
@@ -72,14 +59,6 @@ class FuncionarioService {
     }
 
     static async inativar(id, idSolicitante) {
-        const solicitante = await FuncionarioRepository.findById(idSolicitante);
-
-        if (!solicitante || !solicitante.ativo) {
-            const error = new Error('Acesso negado ou funcionário inativo.');
-            error.statusCode = 403;
-            throw error;
-        }
-
         const sucesso = await FuncionarioRepository.inactivate(id);
 
         if (!sucesso) {

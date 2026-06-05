@@ -12,6 +12,10 @@ export const criarFuncionarioValidation = [
         .notEmpty().withMessage('O e-mail é obrigatório.')
         .isEmail().withMessage('Formato de e-mail inválido.'),
 
+    body('senha')
+        .notEmpty().withMessage('A senha é obrigatória para o cadastro.')
+        .isLength({ min: 3 }).withMessage('A senha deve ter no mínimo 3 caracteres.'),
+
     body('cargo')
         .trim()
         .notEmpty().withMessage('O cargo é obrigatório.'),
