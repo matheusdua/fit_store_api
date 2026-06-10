@@ -7,7 +7,7 @@
       "categoria": "Calças",
       "tamanho": "M",
       "preco": 119.9,
-      "estoque": 15,
+      "estoque": 14,
       "cadastradoPor": 1,
       "ativo": true
     },
@@ -149,33 +149,49 @@
       "id": 1,
       "nome": "Matheus Felipe",
       "email": "matheus@fitstore.com",
-      "cargo": "Gerente",
+      "cargo": "gerente",
       "ativo": true,
-      "senha": "123"
+      "senha": "$2b$10$IAroHMR09SI9pMoX31jZG.K1DDH7bT0gzWU3VjeT9AYYZdvnQngjO"
     },
     {
       "id": 2,
       "nome": "Ana Clara",
       "email": "ana@fitstore.com",
-      "cargo": "Vendedor",
-      "senha": "456",
+      "cargo": "vendedor",
+      "senha": "$2b$10$TGlW2nWVO7EaIakij/sTVeYKae5hDD3pfjNj3jA/R.IgYfAEnYB6m",
       "ativo": true
     },
     {
       "id": 3,
       "nome": "João Carlos",
       "email": "joao@fitstore.com",
-      "cargo": "Vendedor",
-      "senha": "789",
+      "cargo": "vendedor",
+      "senha": "$2b$10$/mb22huqBd/hII2.1/QPxO24S9A4HnxHWi2qOYXl27q4n9LYh0qle",
       "ativo": true
     },
     {
       "id": 4,
-      "nome": "Lucas Estagiário",
+      "nome": "Lucas Estagiario",
       "email": "lucas@fitstore.com",
-      "cargo": "Estagiário",
-      "senha": "123",
-      "ativo": false
+      "cargo": "estagiario",
+      "senha": "$2b$10$qZ6ZqeNWaRftiNGbEe0w6eA3tuID9F8I9j.Ve7uhONd0acuuVyeLy",
+      "ativo": true
+    },
+    {
+      "id": 5,
+      "nome": "Matheus Cliente Teste",
+      "email": "cliente.teste@gmail.com",
+      "senha": "$2b$10$imDpP3UaSJgwh0hH0qbL/uQnyqoQVUUUb1stzBSXCBbFWLaPNFAzu",
+      "cargo": "cliente",
+      "ativo": true
+    },
+    {
+      "id": 6,
+      "nome": "Hacker Espertinho",
+      "email": "hacker@gmail.com",
+      "senha": "$2b$10$3DTUyLLfyp1PTLf.XfJd..06vFeFKnthYfpByDqWY0rDB889PcTP.",
+      "cargo": "cliente",
+      "ativo": true
     }
   ]
 }

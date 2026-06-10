@@ -13,8 +13,8 @@ router.use(verificarToken);
 router.get('/', FuncionarioController.getAll);
 router.get('/:id', FuncionarioController.getById);
 
-router.post('/', apenasCargos(['Gerente']), criarFuncionarioValidation, FuncionarioController.contratar);
-router.patch('/:id', apenasCargos(['Gerente']), atualizarFuncionarioValidation, FuncionarioController.atualizar);
-router.delete('/:id', apenasCargos(['Gerente']), FuncionarioController.inativar);
+router.post('/', apenasCargos(['gerente']), criarFuncionarioValidation, FuncionarioController.contratar);
+router.patch('/:id', apenasCargos(['gerente']), atualizarFuncionarioValidation, FuncionarioController.atualizar);
+router.delete('/:id', apenasCargos(['gerente']), FuncionarioController.inativar);
 
 export default router;

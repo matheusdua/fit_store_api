@@ -1,5 +1,14 @@
+import bcrypt from 'bcrypt';
 import FuncionarioRepository from '../repositories/funcionario.repository.js';
 import { FuncionarioResponseDTO } from '../dtos/funcionario.dto.js';
+
+const { SALT_ROUNDS } = process.env;
+
+if (!SALT_ROUNDS) {
+    throw new Error('ERRO FATAL: SALT_ROUNDS não foi definido no .env');
+}
+
+const saltRoundsNumero = Number(SALT_ROUNDS);
 
 class FuncionarioService {
     static async getAll() {
@@ -33,6 +42,11 @@ class FuncionarioService {
             }
         }
 
+        if (dados.senha) {
+            const salt = await bcrypt.genSalt(saltRoundsNumero);
+            dados.senha = await bcrypt.hash(dados.senha, salt);
+        }
+
         const novoFuncionario = await FuncionarioRepository.create(dados);
         return new FuncionarioResponseDTO(novoFuncionario);
     }
@@ -50,6 +64,13 @@ class FuncionarioService {
             const error = new Error('Não é permitido alterar o próprio cargo.');
             error.statusCode = 403;
             throw error;
+        }
+
+        if (dados.senha && dados.senha.trim() !== '') {
+            const salt = await bcrypt.genSalt(saltRoundsNumero);
+            dados.senha = await bcrypt.hash(dados.senha, salt);
+        } else {
+            delete dados.senha;
         }
 
         delete dados.id;
