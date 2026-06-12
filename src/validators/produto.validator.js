@@ -32,10 +32,10 @@ export const regrasValidacaoProduto = [
 
 export const regrasValidacaoID = [
     param('id')
-        .isInt({ min: 1 }).withMessage('O ID da URL deve ser um número inteiro válido.'),
-
+        .isMongoId().withMessage('O ID da URL não é um formato válido do MongoDB.'),
     verificarErros
 ];
+
 
 export const regrasValidacaoQuantidade = [
     body('quantidade')
