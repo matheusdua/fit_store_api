@@ -1,67 +1,50 @@
-import db from '../config/database.js';
-import { ObjectId } from 'mongodb';
+import Funcionario from '../models/funcionario.model.js';
 
-const mapId = (doc) => {
-    if (!doc) return null;
-    const { _id, ...rest } = doc;
-    return { id: _id.toString(), ...rest };
-};
+const toJSON = (doc) => doc ? doc.toJSON() : null;
 
 class FuncionarioRepository {
-    static getCollection() {
-        return db.getDb().collection('funcionarios');
-    }
-
     static async findAll() {
-        const funcionarios = await this.getCollection().find({}).toArray();
-        return funcionarios.map(mapId);
+        const funcionarios = await Funcionario.find();
+        return funcionarios.map(toJSON);
     }
 
     static async findById(id) {
-        if (!ObjectId.isValid(id)) return null;
-        const funcionario = await this.getCollection().findOne({ _id: new ObjectId(id) });
-        return mapId(funcionario);
+        const funcionario = await Funcionario.findById(id);
+        return toJSON(funcionario);
     }
 
     static async findByEmail(email) {
-        const funcionario = await this.getCollection().findOne({ email });
-        return mapId(funcionario);
+        const funcionario = await Funcionario.findOne({ email });
+        return toJSON(funcionario);
     }
 
     static async findByName(nome) {
         const regex = new RegExp(nome, 'i');
-        const funcionarios = await this.getCollection().find({ nome: regex }).toArray();
-        return funcionarios.map(mapId);
+        const funcionarios = await Funcionario.find({ nome: regex });
+        return funcionarios.map(toJSON);
     }
 
     static async create(dados) {
-        const novoFuncionario = { ...dados, ativo: true };
-        const result = await this.getCollection().insertOne(novoFuncionario);
-
-        return mapId({ _id: result.insertedId, ...novoFuncionario });
+        const novoFuncionario = await Funcionario.create(dados);
+        return toJSON(novoFuncionario);
     }
 
     static async replace(id, dados) {
-        if (!ObjectId.isValid(id)) return null;
-
-        const result = await this.getCollection().findOneAndReplace(
-            { _id: new ObjectId(id) },
+        const result = await Funcionario.findOneAndReplace(
+            { _id: id },
             dados,
             { returnDocument: 'after' }
         );
-
-        return mapId(result);
+        return toJSON(result);
     }
 
     static async inactivate(id) {
-        if (!ObjectId.isValid(id)) return false;
-
-        const result = await this.getCollection().updateOne(
-            { _id: new ObjectId(id) },
-            { $set: { ativo: false } }
+        const result = await Funcionario.findByIdAndUpdate(
+            id,
+            { ativo: false },
+            { returnDocument: 'after' }
         );
-
-        return result.modifiedCount > 0;
+        return result !== null;
     }
 
 }

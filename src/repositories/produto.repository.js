@@ -1,63 +1,44 @@
-import db from '../config/database.js';
-import { ObjectId } from 'mongodb';
+import Produto from '../models/produto.model.js';
 
-const mapId = (doc) => {
-    if (!doc) return null;
-    const { _id, ...rest } = doc;
-    return { id: _id.toString(), ...rest };
-};
+const toJSON = (doc) => doc ? doc.toJSON() : null;
 
 class ProdutoRepository {
-    static getCollection() {
-        return db.getDb().collection('produtos');
-    }
-
     static async findAll() {
-        const produtos = await this.getCollection().find({}).toArray();
-        return produtos.map(mapId);
+        const produtos = await Produto.find();
+        return produtos.map(toJSON);
     }
 
     static async findById(id) {
-        if (!ObjectId.isValid(id)) return null;
-        const produto = await this.getCollection().findOne({ _id: new ObjectId(id) });
-        return mapId(produto);
+        const produto = await Produto.findById(id);
+        return toJSON(produto);
     }
 
     static async create(produtoData) {
-        const novoProduto = { ativo: true, ...produtoData };
-        const result = await this.getCollection().insertOne(novoProduto);
-        return mapId({ _id: result.insertedId, ...novoProduto });
+        const novoProduto = await Produto.create(produtoData);
+        return toJSON(novoProduto);
     }
 
     static async replace(id, produtoData) {
-        if (!ObjectId.isValid(id)) return null;
-
-        const result = await this.getCollection().findOneAndReplace(
-            { _id: new ObjectId(id) },
+        const result = await Produto.findOneAndReplace(
+            { _id: id },
             produtoData,
             { returnDocument: 'after' }
         );
-
-        return mapId(result);
+        return toJSON(result);
     }
 
     static async partialUpdate(id, produtoData) {
-        if (!ObjectId.isValid(id)) return null;
-
-        const result = await this.getCollection().findOneAndUpdate(
-            { _id: new ObjectId(id) },
+        const result = await Produto.findByIdAndUpdate(
+            id,
             { $set: produtoData },
             { returnDocument: 'after' }
         );
-
-        return mapId(result);
+        return toJSON(result);
     }
 
     static async delete(id) {
-        if (!ObjectId.isValid(id)) return false;
-
-        const result = await this.getCollection().deleteOne({ _id: new ObjectId(id) });
-        return result.deletedCount > 0;
+        const result = await Produto.findByIdAndDelete(id);
+        return result !== null;
     }
 }
 
