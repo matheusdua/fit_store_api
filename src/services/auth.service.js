@@ -12,8 +12,7 @@ const saltRoundsNumero = Number(SALT_ROUNDS);
 
 class AuthService {
     static async login(email, senha) {
-        const funcionarios = await FuncionarioRepository.findAll();
-        const user = funcionarios.find(f => f.email === email);
+        const user = await FuncionarioRepository.findByEmail(email);
 
         if (!user || !user.ativo) {
             const error = new Error('Credenciais inválidas ou usuário inativo.');
@@ -49,7 +48,6 @@ class AuthService {
     static async register(dados) {
         dados.email = dados.email.toLowerCase();
         const emailExistente = await FuncionarioRepository.findByEmail(dados.email);
-
         if (emailExistente) {
             const error = new Error('Este e-mail já está cadastrado no sistema.');
             error.statusCode = 409;

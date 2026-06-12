@@ -60,7 +60,7 @@ class FuncionarioService {
             throw error;
         }
 
-        if (dados.cargo && Number(id) === Number(idSolicitante)) {
+        if (dados.cargo && id === idSolicitante) {
             const error = new Error('Não é permitido alterar o próprio cargo.');
             error.statusCode = 403;
             throw error;
@@ -75,7 +75,7 @@ class FuncionarioService {
 
         delete dados.id;
 
-        const atualizado = await FuncionarioRepository.update(id, dados);
+        const atualizado = await FuncionarioRepository.replace(id, dados);
         return new FuncionarioResponseDTO(atualizado);
     }
 

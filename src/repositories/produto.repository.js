@@ -1,62 +1,63 @@
 import db from '../config/database.js';
+import { ObjectId } from 'mongodb';
+
+const mapId = (doc) => {
+    if (!doc) return null;
+    const { _id, ...rest } = doc;
+    return { id: _id.toString(), ...rest };
+};
 
 class ProdutoRepository {
+    static getCollection() {
+        return db.getDb().collection('produtos');
+    }
+
     static async findAll() {
-        await db.read();
-        return db.data.produtos;
+        const produtos = await this.getCollection().find({}).toArray();
+        return produtos.map(mapId);
     }
 
     static async findById(id) {
-        await db.read();
-        return db.data.produtos.find(p => p.id === Number(id));
+        if (!ObjectId.isValid(id)) return null;
+        const produto = await this.getCollection().findOne({ _id: new ObjectId(id) });
+        return mapId(produto);
     }
 
     static async create(produtoData) {
-        await db.read();
-        const produtos = db.data.produtos;
-
-        const proximoId = produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
-
-        const novoProduto = { id: proximoId, ativo: true, ...produtoData };
-        produtos.push(novoProduto);
-
-        await db.write();
-        return novoProduto;
+        const novoProduto = { ativo: true, ...produtoData };
+        const result = await this.getCollection().insertOne(novoProduto);
+        return mapId({ _id: result.insertedId, ...novoProduto });
     }
 
-    static async update(id, produtoData) {
-        await db.read();
-        const index = db.data.produtos.findIndex(p => p.id === Number(id));
+    static async replace(id, produtoData) {
+        if (!ObjectId.isValid(id)) return null;
 
-        if (index === -1) return null;
+        const result = await this.getCollection().findOneAndReplace(
+            { _id: new ObjectId(id) },
+            produtoData,
+            { returnDocument: 'after' }
+        );
 
-        db.data.produtos[index] = { id: Number(id), ...produtoData };
-        await db.write();
-
-        return db.data.produtos[index];
+        return mapId(result);
     }
 
     static async partialUpdate(id, produtoData) {
-        await db.read();
-        const index = db.data.produtos.findIndex(p => p.id === Number(id));
+        if (!ObjectId.isValid(id)) return null;
 
-        if (index === -1) return null;
+        const result = await this.getCollection().findOneAndUpdate(
+            { _id: new ObjectId(id) },
+            { $set: produtoData },
+            { returnDocument: 'after' }
+        );
 
-        db.data.produtos[index] = { ...db.data.produtos[index], ...produtoData, id: Number(id) };
-        await db.write();
-
-        return db.data.produtos[index];
+        return mapId(result);
     }
 
     static async delete(id) {
-        await db.read();
-        const index = db.data.produtos.findIndex(p => p.id === Number(id));
+        if (!ObjectId.isValid(id)) return false;
 
-        if (index === -1) return false;
-
-        db.data.produtos.splice(index, 1);
-        await db.write();
-        return true;
+        const result = await this.getCollection().deleteOne({ _id: new ObjectId(id) });
+        return result.deletedCount > 0;
     }
 }
 

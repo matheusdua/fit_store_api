@@ -1,6 +1,5 @@
 import ProdutoRepository from '../repositories/produto.repository.js';
 import { ProdutoResponseDTO } from '../dtos/produto.dto.js';
-import FuncionarioRepository from '../repositories/funcionario.repository.js';
 
 class ProdutoService {
     static async getAll(busca = '') {
@@ -52,7 +51,7 @@ class ProdutoService {
             throw error;
         }
 
-        dados.cadastradoPor = Number(idSolicitante);
+        dados.cadastradoPor = idSolicitante;
 
         const novoProduto = await ProdutoRepository.create(dados);
         return new ProdutoResponseDTO(novoProduto);
@@ -70,7 +69,7 @@ class ProdutoService {
 
         if (dados.referencia) {
             const produtos = await ProdutoRepository.findAll();
-            const conflito = produtos.find(p => p.referencia === dados.referencia && p.id !== Number(id));
+            const conflito = produtos.find(p => p.referencia === dados.referencia && p.id !== id);
             if (conflito) {
                 const error = new Error('Referência já em uso por outro produto');
                 error.statusCode = 409;
@@ -80,7 +79,7 @@ class ProdutoService {
 
         delete dados.id;
 
-        const produtoAtualizado = await ProdutoRepository.update(id, dados);
+        const produtoAtualizado = await ProdutoRepository.replace(id, dados);
         return new ProdutoResponseDTO(produtoAtualizado);
     }
 

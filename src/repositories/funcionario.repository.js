@@ -1,66 +1,69 @@
 import db from '../config/database.js';
+import { ObjectId } from 'mongodb';
+
+const mapId = (doc) => {
+    if (!doc) return null;
+    const { _id, ...rest } = doc;
+    return { id: _id.toString(), ...rest };
+};
 
 class FuncionarioRepository {
+    static getCollection() {
+        return db.getDb().collection('funcionarios');
+    }
+
     static async findAll() {
-        await db.read();
-        return db.data.funcionarios;
+        const funcionarios = await this.getCollection().find({}).toArray();
+        return funcionarios.map(mapId);
     }
 
     static async findById(id) {
-        await db.read();
-        return db.data.funcionarios.find(f => f.id === Number(id));
+        if (!ObjectId.isValid(id)) return null;
+        const funcionario = await this.getCollection().findOne({ _id: new ObjectId(id) });
+        return mapId(funcionario);
     }
 
     static async findByEmail(email) {
-        await db.read();
-        return db.data.funcionarios.find(f => f.email === email);
+        const funcionario = await this.getCollection().findOne({ email });
+        return mapId(funcionario);
     }
 
     static async findByName(nome) {
-        await db.read();
-        return db.data.funcionarios.filter(f =>
-            f.nome.toLowerCase().includes(nome.toLowerCase())
-        );
+        const regex = new RegExp(nome, 'i');
+        const funcionarios = await this.getCollection().find({ nome: regex }).toArray();
+        return funcionarios.map(mapId);
     }
 
     static async create(dados) {
-        await db.read();
+        const novoFuncionario = { ...dados, ativo: true };
+        const result = await this.getCollection().insertOne(novoFuncionario);
 
-        const ultimoFuncionario = db.data.funcionarios[db.data.funcionarios.length - 1];
-        const novoId = ultimoFuncionario ? ultimoFuncionario.id + 1 : 1;
-
-        const novoFuncionario = { id: novoId, ...dados, ativo: true };
-
-        db.data.funcionarios.push(novoFuncionario);
-        await db.write();
-        return novoFuncionario;
+        return mapId({ _id: result.insertedId, ...novoFuncionario });
     }
 
-    static async update(id, dados) {
-        await db.read();
-        const index = db.data.funcionarios.findIndex(f => f.id === Number(id));
+    static async replace(id, dados) {
+        if (!ObjectId.isValid(id)) return null;
 
-        if (index !== -1) {
-            db.data.funcionarios[index] = { ...db.data.funcionarios[index], ...dados, id: Number(id) };
-            await db.write();
-            return db.data.funcionarios[index];
-        }
+        const result = await this.getCollection().findOneAndReplace(
+            { _id: new ObjectId(id) },
+            dados,
+            { returnDocument: 'after' }
+        );
 
-        return null;
+        return mapId(result);
     }
 
     static async inactivate(id) {
-        await db.read();
-        const funcionario = db.data.funcionarios.find(f => f.id === Number(id));
+        if (!ObjectId.isValid(id)) return false;
 
-        if (funcionario) {
-            funcionario.ativo = false;
-            await db.write();
-            return true;
-        }
+        const result = await this.getCollection().updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { ativo: false } }
+        );
 
-        return false;
+        return result.modifiedCount > 0;
     }
+
 }
 
 export default FuncionarioRepository;
