@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import FuncionarioRepository from '../repositories/funcionario.repository.js';
-import { FuncionarioResponseDTO } from '../dtos/funcionario.dto.js';
+import UsuarioRepository from '../repositories/usuario.repository.js';
+import { UsuarioResponseDTO } from '../dtos/usuario.dto.js';
 
 const { SALT_ROUNDS } = process.env;
 
@@ -10,22 +10,22 @@ if (!SALT_ROUNDS) {
 
 const saltRoundsNumero = Number(SALT_ROUNDS);
 
-class FuncionarioService {
+class UsuarioService {
     static async getAll() {
-        const funcionarios = await FuncionarioRepository.findAll();
-        return funcionarios.map(f => new FuncionarioResponseDTO(f));
+        const usuarios = await UsuarioRepository.findAll();
+        return usuarios.map(f => new UsuarioResponseDTO(f));
     }
 
     static async getById(id) {
-        const funcionario = await FuncionarioRepository.findById(id);
+        const usuario = await UsuarioRepository.findById(id);
 
-        if (!funcionario) {
+        if (!usuario) {
             const error = new Error('Funcionário não encontrado.');
             error.statusCode = 404;
             throw error;
         }
 
-        return new FuncionarioResponseDTO(funcionario);
+        return new UsuarioResponseDTO(usuario);
     }
 
     static async contratar(dados) {
@@ -33,7 +33,7 @@ class FuncionarioService {
 
         if (dados.email) {
             dados.email = dados.email.toLowerCase();
-            const emailExistente = await FuncionarioRepository.findByEmail(dados.email);
+            const emailExistente = await UsuarioRepository.findByEmail(dados.email);
 
             if (emailExistente) {
                 const error = new Error('Este e-mail já está cadastrado no sistema.');
@@ -47,14 +47,14 @@ class FuncionarioService {
             dados.senha = await bcrypt.hash(dados.senha, salt);
         }
 
-        const novoFuncionario = await FuncionarioRepository.create(dados);
-        return new FuncionarioResponseDTO(novoFuncionario);
+        const novoUsuario = await UsuarioRepository.create(dados);
+        return new UsuarioResponseDTO(novoUsuario);
     }
 
     static async atualizar(id, dados, idSolicitante) {
-        const funcionarioAlvo = await FuncionarioRepository.findById(id);
+        const usuarioAlvo = await UsuarioRepository.findById(id);
 
-        if (!funcionarioAlvo) {
+        if (!usuarioAlvo) {
             const error = new Error('Funcionário não encontrado.');
             error.statusCode = 404;
             throw error;
@@ -75,12 +75,12 @@ class FuncionarioService {
 
         delete dados.id;
 
-        const atualizado = await FuncionarioRepository.replace(id, dados);
-        return new FuncionarioResponseDTO(atualizado);
+        const atualizado = await UsuarioRepository.replace(id, dados);
+        return new UsuarioResponseDTO(atualizado);
     }
 
     static async inativar(id, idSolicitante) {
-        const sucesso = await FuncionarioRepository.inactivate(id);
+        const sucesso = await UsuarioRepository.inactivate(id);
 
         if (!sucesso) {
             const error = new Error('Funcionário não encontrado.');
@@ -92,4 +92,4 @@ class FuncionarioService {
     }
 }
 
-export default FuncionarioService;
+export default UsuarioService;

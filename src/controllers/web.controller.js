@@ -1,5 +1,5 @@
 import ProdutoService from '../services/produto.service.js';
-import FuncionarioService from '../services/funcionario.service.js';
+import UsuarioService from '../services/usuario.service.js';
 
 class WebController {
     static async listarCatalogo(req, res) {
@@ -21,8 +21,8 @@ class WebController {
 
             if (produto.cadastradoPor) {
                 try {
-                    const funcionario = await FuncionarioService.getById(produto.cadastradoPor);
-                    produto.nomeAutor = funcionario.nome;
+                    const usuario = await UsuarioService.getById(produto.cadastradoPor);
+                    produto.nomeAutor = usuario.nome;
                 } catch (err) {
                     produto.nomeAutor = 'Usuário Desconhecido';
                 }
@@ -36,8 +36,8 @@ class WebController {
 
     static async listarEquipe(req, res) {
         try {
-            const funcionarios = await FuncionarioService.getAll();
-            res.render('funcionarios', { funcionarios });
+            const usuarios = await UsuarioService.getAll();
+            res.render('usuarios', { usuarios });
         } catch (error) {
             console.error(error);
             res.status(500).send('Erro interno ao carregar a lista de funcionários.');

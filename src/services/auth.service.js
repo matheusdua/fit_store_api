@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import FuncionarioRepository from '../repositories/funcionario.repository.js';
+import UsuarioRepository from '../repositories/usuario.repository.js';
 
 const { JWT_SECRET, SALT_ROUNDS } = process.env;
 
@@ -12,7 +12,7 @@ const saltRoundsNumero = Number(SALT_ROUNDS);
 
 class AuthService {
     static async login(email, senha) {
-        const user = await FuncionarioRepository.findByEmail(email);
+        const user = await UsuarioRepository.findByEmail(email);
 
         if (!user || !user.ativo) {
             const error = new Error('Credenciais inválidas ou usuário inativo.');
@@ -37,7 +37,7 @@ class AuthService {
         return {
             mensagem: 'Login realizado com sucesso',
             token: token,
-            funcionario: {
+            usuario: {
                 id: user.id,
                 nome: user.nome,
                 cargo: user.cargo
@@ -47,7 +47,7 @@ class AuthService {
 
     static async register(dados) {
         dados.email = dados.email.toLowerCase();
-        const emailExistente = await FuncionarioRepository.findByEmail(dados.email);
+        const emailExistente = await UsuarioRepository.findByEmail(dados.email);
         if (emailExistente) {
             const error = new Error('Este e-mail já está cadastrado no sistema.');
             error.statusCode = 409;
@@ -59,7 +59,7 @@ class AuthService {
         const salt = await bcrypt.genSalt(saltRoundsNumero);
         dados.senha = await bcrypt.hash(dados.senha, salt);
 
-        const novoCliente = await FuncionarioRepository.create(dados);
+        const novoCliente = await UsuarioRepository.create(dados);
 
         return {
             mensagem: 'Cadastro realizado com sucesso',

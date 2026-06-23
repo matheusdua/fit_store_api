@@ -37,7 +37,7 @@ Para interagir com os endpoints da API, recomenda-se o uso de ferramentas como T
 
 1. Selecione o método HTTP desejado (GET, POST, PATCH, DELETE).
 2. Insira a URL correspondente ao endpoint.
-3. Na aba **Headers**, adicione a chave `funcionario` e insira no valor um ID de funcionário válido (ex: 1).
+3. Na aba **Headers**, adicione a chave `usuario` e insira no valor um ID de funcionário válido (ex: 1).
 4. Na aba **Body**, selecione o formato **JSON** e insira os dados necessários.
 5. Envie a requisição.
 
@@ -45,7 +45,7 @@ Para interagir com os endpoints da API, recomenda-se o uso de ferramentas como T
 
 - **Método HTTP**: POST
 - **URL**: http://localhost:3000/api/produtos
-- **Header**: `funcionario : 1`
+- **Header**: `usuario : 1`
 - **Body (JSON)**:
 
 ```json
@@ -86,7 +86,7 @@ A pasta `src` centraliza os recursos do servidor, incluindo os arquivos principa
 - `PATCH /:id/repor`: Adiciona quantidade ao estoque de um item existente.
 - `PATCH /:id/inativar`: Altera o status do produto para inativo (fora de linha).
 
-### Funcionários (/api/funcionarios)
+### Funcionários (/api/usuarios)
 
 - `GET /`: Lista todos os membros da equipe.
 - `POST /`: Cadastra um novo colaborador no sistema.

@@ -3,7 +3,7 @@ import { verificarErros } from '../middlewares/validation.middleware.js';
 
 const cargosPermitidos = ['gerente', 'vendedor', 'estagiario', 'cliente'];
 
-export const criarFuncionarioValidation = [
+export const criarUsuarioValidation = [
     body('nome')
         .trim()
         .notEmpty().withMessage('O nome é obrigatório.')
@@ -26,7 +26,7 @@ export const criarFuncionarioValidation = [
     verificarErros
 ];
 
-export const atualizarFuncionarioValidation = [
+export const atualizarUsuarioValidation = [
     body('nome')
         .optional()
         .trim()

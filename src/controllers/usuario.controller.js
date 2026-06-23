@@ -1,10 +1,10 @@
-import FuncionarioService from '../services/funcionario.service.js';
+import UsuarioService from '../services/usuario.service.js';
 
-class FuncionarioController {
+class UsuarioController {
     static async getAll(req, res, next) {
         try {
-            const funcionarios = await FuncionarioService.getAll();
-            res.status(200).json(funcionarios);
+            const usuarios = await UsuarioService.getAll();
+            res.status(200).json(usuarios);
         } catch (error) {
             next(error);
         }
@@ -13,8 +13,8 @@ class FuncionarioController {
     static async getById(req, res, next) {
         try {
             const { id } = req.params;
-            const funcionario = await FuncionarioService.getById(id);
-            res.status(200).json(funcionario);
+            const usuario = await UsuarioService.getById(id);
+            res.status(200).json(usuario);
         } catch (error) {
             next(error);
         }
@@ -23,8 +23,8 @@ class FuncionarioController {
     static async contratar(req, res, next) {
         try {
             const dados = req.body;
-            const novoFuncionario = await FuncionarioService.contratar(dados);
-            res.status(201).json(novoFuncionario);
+            const novoUsuario = await UsuarioService.contratar(dados);
+            res.status(201).json(novoUsuario);
         } catch (error) {
             next(error);
         }
@@ -36,8 +36,8 @@ class FuncionarioController {
             const dados = req.body;
             const idSolicitante = req.usuarioAutenticado;
 
-            const funcionarioAtualizado = await FuncionarioService.atualizar(id, dados, idSolicitante);
-            res.status(200).json(funcionarioAtualizado);
+            const usuarioAtualizado = await UsuarioService.atualizar(id, dados, idSolicitante);
+            res.status(200).json(usuarioAtualizado);
         } catch (error) {
             next(error);
         }
@@ -47,7 +47,7 @@ class FuncionarioController {
         try {
             const { id } = req.params;
 
-            const resultado = await FuncionarioService.inativar(id);
+            const resultado = await UsuarioService.inativar(id);
             res.status(200).json(resultado);
         } catch (error) {
             next(error);
@@ -55,5 +55,5 @@ class FuncionarioController {
     }
 }
 
-export default FuncionarioController;
+export default UsuarioController;
 

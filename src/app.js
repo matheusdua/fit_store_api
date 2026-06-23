@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 import authRoutes from './routes/auth.routes.js';
 import produtoRoutes from './routes/produto.routes.js';
-import funcionarioRoutes from './routes/funcionario.routes.js'
+import usuarioRoutes from './routes/usuario.routes.js'
 import webRoutes from './routes/web.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +28,7 @@ app.use(logger);
 
 app.use('/api/auth', authRoutes);
 app.use('/api', produtoRoutes);
-app.use('/api/funcionarios', funcionarioRoutes);
+app.use('/api/usuarios', usuarioRoutes);
 app.use('/', webRoutes);
 
 app.use((req, res, next) => {
