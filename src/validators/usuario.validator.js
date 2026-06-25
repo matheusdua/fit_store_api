@@ -9,6 +9,12 @@ export const criarUsuarioValidation = [
         .notEmpty().withMessage('O nome é obrigatório.')
         .isLength({ min: 3 }).withMessage('O nome deve ter pelo menos 3 caracteres.'),
 
+    body('username')
+        .trim()
+        .notEmpty().withMessage('O nome de usuário (username) é obrigatório.')
+        .toLowerCase()
+        .matches(/^[a-z0-9_]+$/).withMessage('O username deve conter apenas letras minúsculas, números e underline (_).'),
+
     body('email')
         .trim()
         .notEmpty().withMessage('O e-mail é obrigatório.')
@@ -32,6 +38,12 @@ export const atualizarUsuarioValidation = [
         .trim()
         .isLength({ min: 3 }).withMessage('O nome deve ter pelo menos 3 caracteres.'),
 
+    body('username')
+        .optional()
+        .trim()
+        .toLowerCase()
+        .matches(/^[a-z0-9_]+$/).withMessage('O username deve conter apenas letras minúsculas, números e underline (_).'),
+
     body('email')
         .optional()
         .trim()
@@ -47,7 +59,6 @@ export const atualizarUsuarioValidation = [
         .optional()
         .trim()
         .isLength({ min: 3 }).withMessage('A nova senha deve ter no mínimo 3 caracteres.'),
-
 
     verificarErros
 ];

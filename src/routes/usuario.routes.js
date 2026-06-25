@@ -11,10 +11,11 @@ const router = Router();
 router.use(verificarToken);
 
 router.get('/', UsuarioController.getAll);
-router.get('/:id', UsuarioController.getById);
+
+router.get('/:username', UsuarioController.getByUsername);
 
 router.post('/', apenasCargos(['gerente']), criarUsuarioValidation, UsuarioController.contratar);
-router.patch('/:id', apenasCargos(['gerente']), atualizarUsuarioValidation, UsuarioController.atualizar);
-router.delete('/:id', apenasCargos(['gerente']), UsuarioController.inativar);
+router.patch('/:username', apenasCargos(['gerente']), atualizarUsuarioValidation, UsuarioController.atualizar);
+router.delete('/:username', apenasCargos(['gerente']), UsuarioController.inativar);
 
 export default router;

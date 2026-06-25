@@ -47,6 +47,20 @@ class UsuarioRepository {
         return result !== null;
     }
 
+    static async findByUsername(username) {
+        const usuario = await Usuario.findOne({ username: username.toLowerCase() });
+        return toJSON(usuario);
+    }
+
+    static async findByLogin(loginInput) {
+        const usuario = await Usuario.findOne({
+            $or: [
+                { email: loginInput },
+                { username: loginInput.toLowerCase() }
+            ]
+        });
+        return toJSON(usuario);
+    }
 }
 
 export default UsuarioRepository;
