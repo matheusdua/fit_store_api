@@ -1,0 +1,30 @@
+extends layouts/main.pug
+
+block content
+  .detalhe-container(style="max-width: 500px; margin: 4rem auto;")
+    .detalhe-card
+      h2(style="text-align: center; margin-bottom: 2rem;") Criar Nova Conta
+      
+      if erro
+        .badge-esgotado(style="width: 100%; padding: 0.8rem; margin-bottom: 1.5rem; border-radius: 6px; text-align: center; box-sizing: border-box;") #{erro}
+
+      form(action="/register" method="POST" style="display: flex; flex-direction: column; gap: 1.2rem;")
+        .form-group(style="display: flex; flex-direction: column; gap: 0.4rem;")
+          label(style="font-weight: 600;") Seu Nome Completo
+          input(type="text" name="nome" placeholder="Ex: Joao Silva" required style="padding: 0.7rem; border: 1px solid #ccc; border-radius: 6px;")
+        
+        .form-group(style="display: flex; flex-direction: column; gap: 0.4rem;")
+          label(style="font-weight: 600;") Nome de Usuario (Username)
+          input(type="text" name="username" placeholder="Ex: joaosilva12" required style="padding: 0.7rem; border: 1px solid #ccc; border-radius: 6px;")
+        
+        .form-group(style="display: flex; flex-direction: column; gap: 0.4rem;")
+          label(style="font-weight: 600;") E-mail de Contato
+          input(type="email" name="email" placeholder="joao@email.com" required style="padding: 0.7rem; border: 1px solid #ccc; border-radius: 6px;")
+        
+        .form-group(style="display: flex; flex-direction: column; gap: 0.4rem;")
+          label(style="font-weight: 600;") Senha de Acesso
+          input(type="password" name="senha" placeholder="Minimo 3 caracteres" required style="padding: 0.7rem; border: 1px solid #ccc; border-radius: 6px;")
+
+        button.btn-comprar(type="submit" style="margin-top: 1rem; background-color: var(--success);") Concluir Cadastro
+        
+      a.btn-voltar(href="/login" style="text-align: center; display: block;") Já tem uma conta? Fazer Login

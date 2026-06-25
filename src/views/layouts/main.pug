@@ -16,10 +16,19 @@ html(lang="pt-BR")
                 input(
                   type="text",
                   name="busca",
-                  placeholder="Nome ou referência...",
+                  placeholder="Nome ou referencia...",
                   value=busca
                 )
                 button(type="submit") Buscar
+          
+          .auth-status(style="display: flex; align-items: center;")
+            if usuarioLogado
+              span(style="color: white; margin-right: 20px; font-size: 0.95rem;") Ola, #[strong(style="color: var(--accent);")= usuarioLogado] (#{cargoUsuario})
+              if cargoUsuario === 'gerente'
+                a(href="/equipe" style="color: white; margin-right: 20px; text-decoration: none; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid var(--accent);") Gestao de Equipe
+              a(href="/login" style="color: #a4b0be; text-decoration: none; font-size: 0.9rem;") Sair
+            else
+              a(href="/login" style="color: white; text-decoration: none; font-weight: bold; font-size: 0.9rem;") Entrar / Criar Conta
 
     main.container
       block content

@@ -6,31 +6,45 @@ if (!JWT_SECRET) {
     throw new Error('ERRO FATAL: JWT_SECRET não está definido nas variáveis de ambiente.');
 }
 
-export const verificarToken = (req, res, next) => {
+const extrairTokenNativo = (req) => {
     const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-        return res.status(401).json({ erro: "Token de autenticação não fornecido." });
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        return authHeader.split(' ')[1];
     }
 
-    const parts = authHeader.split(' ');
-    if (parts.length !== 2) {
-        return res.status(401).json({ erro: "Erro no formato do token." });
+    if (req.headers.cookie) {
+        const cookies = req.headers.cookie.split(';');
+        const tokenCookie = cookies.find(c => c.trim().startsWith('token='));
+        if (tokenCookie) {
+            const rawCookie = tokenCookie.trim();
+            const eqIndex = rawCookie.indexOf('=');
+            return rawCookie.substring(eqIndex + 1).trim();
+        }
     }
 
-    const [scheme, token] = parts;
-    if (!/^Bearer$/i.test(scheme)) {
-        return res.status(401).json({ erro: "Token mal formatado." });
+    return null;
+};
+
+export const verificarToken = (req, res, next) => {
+    const token = extrairTokenNativo(req);
+
+    if (!token) {
+        if (req.originalUrl.startsWith('/api/')) {
+            return res.status(401).json({ erro: "Token de autenticação não fornecido." });
+        }
+        return res.redirect('/login');
     }
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ erro: "Token inválido ou expirado." });
+            if (req.originalUrl.startsWith('/api/')) {
+                return res.status(401).json({ erro: "Token inválido ou expirado." });
+            }
+            return res.redirect('/login');
         }
 
-        req.usernameAutenticado = decoded.username;
-        req.cargoAutenticado = decoded.cargo;
-
+        req.usernameAutenticado = decoded.username || decoded.login || decoded.email;
+        req.cargoAutenticado = decoded.cargo || decoded.role || decoded.tipo;
         next();
     });
 };
@@ -40,29 +54,23 @@ export const apenasCargos = (cargosPermitidos) => {
         const cargoDoUsuario = req.cargoAutenticado;
 
         if (!cargoDoUsuario || !cargosPermitidos.includes(cargoDoUsuario)) {
-            return res.status(403).json({
-                erro: "Acesso negado. Seu cargo não tem permissão para realizar esta ação."
-            });
+            if (req.originalUrl.startsWith('/api/')) {
+                return res.status(403).json({ erro: "Acesso negado. Permissao insuficiente." });
+            }
+            return res.status(403).send("Acesso negado. Seu cargo nao tem permissao para ver esta tela.");
         }
         next();
     };
-
 };
 
 export const coletarCargoOpcional = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return next();
-
-    const parts = authHeader.split(' ');
-    if (parts.length !== 2) return next();
-
-    const [scheme, token] = parts;
-    if (!/^Bearer$/i.test(scheme)) return next();
+    const token = extrairTokenNativo(req);
+    if (!token) return next();
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (!err) {
-            req.usernameAutenticado = decoded.username;
-            req.cargoAutenticado = decoded.cargo;
+            req.usernameAutenticado = decoded.username || decoded.login || decoded.email;
+            req.cargoAutenticado = decoded.cargo || decoded.role || decoded.tipo;
         }
         next();
     });

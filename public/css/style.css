@@ -5,6 +5,9 @@
   --white: #ffffff;
   --text: #2f3542;
   --success: #2ed573;
+  --gray: #747d8c;
+  --blue: #31708f;
+  --blue-bg: #e3edf7;
 }
 
 body {
@@ -30,6 +33,12 @@ body {
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.auth-status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .search-box form {
@@ -98,6 +107,12 @@ body {
   border: 1px solid #f5c2c7;
 }
 
+.card-inativo {
+  opacity: 0.5;
+  filter: grayscale(0.8);
+  border: 1px dashed var(--gray);
+}
+
 .nome-produto {
   font-size: 1.2rem;
   margin-bottom: 0.2rem;
@@ -105,7 +120,7 @@ body {
 }
 
 .ref-produto {
-  color: #747d8c;
+  color: var(--gray);
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
 }
@@ -126,22 +141,25 @@ body {
   text-decoration: none;
   border-radius: 6px;
   font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-align: center;
 }
 
-.badge-esgotado {
-  background: var(--accent);
+.btn-comprar {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--accent);
   color: var(--white);
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.detalhe-card {
-  background: var(--white);
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+.btn-comprar:hover {
+  background-color: #ff2e43;
 }
 
 .btn-voltar {
@@ -152,17 +170,15 @@ body {
   font-weight: bold;
 }
 
-footer {
-  text-align: center;
-  padding: 4rem 0;
-  color: #a4b0be;
-  font-size: 0.9rem;
-}
-
-.card-inativo {
-  opacity: 0.5;
-  filter: grayscale(0.8);
-  border: 1px dashed #ccc;
+/* Badges de Status */
+.badge-esgotado {
+  background: var(--accent);
+  color: var(--white);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: inline-block;
 }
 
 .badge-inativo-vitrine {
@@ -173,4 +189,54 @@ footer {
   font-size: 0.75rem;
   font-weight: bold;
   display: inline-block;
+}
+
+.detalhe-card {
+  background: var(--white);
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 3rem;
+  background: var(--white);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.admin-table thead {
+  background-color: #f4f4f4;
+  color: var(--text);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge-cargo {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+footer {
+  text-align: center;
+  padding: 4rem 0;
+  color: #a4b0be;
+  font-size: 0.9rem;
 }

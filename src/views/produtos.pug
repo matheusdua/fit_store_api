@@ -1,11 +1,17 @@
 extends layouts/main.pug
 
 block content
-  .header-vitrine
+  .header-vitrine(style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;")
     if busca
       h2 Resultados para: "#{ busca }"
     else
-      h2 Catálogo Completo
+      h2 Catalogo Completo
+
+    if cargoUsuario === 'gerente' || cargoUsuario === 'vendedor'
+      a.btn-detalhes(href="/produtos/novo" style="background-color: var(--success); margin-top: 0; padding: 0.6rem 1.2rem;") + Novo Produto
+
+  if error
+    .badge-esgotado(style="padding: 0.8rem; margin-bottom: 1.5rem; border-radius: 6px; display: block; text-align: center; width: 100%; box-sizing: border-box;") #{error}
 
   .vitrine-grid
     if produtos.length > 0
@@ -25,6 +31,20 @@ block content
           else
             p.estoque-produto Estoque: #{ produto.estoque } un.
 
-          a.btn-detalhes(href="/vitrine/" + produto.id) Ver Detalhes
+          .card-actions(style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 8px;")
+            a.btn-detalhes(href="/vitrine/" + produto.referencia style="margin-top: 0;") Ver Detalhes
+            
+            if (!cargoUsuario || cargoUsuario === 'cliente') && produto.ativo !== false && produto.estoque > 0
+              form(action=`/produtos/${produto.referencia}/comprar` method="POST" style="width: 100%; margin: 0; padding: 0;")
+                input(type="hidden" name="quantidade" value="1")
+                button.btn-comprar(type="submit") Comprar Agora
+
+            if cargoUsuario === 'gerente'
+              .gerente-quick-actions(style="display: flex; gap: 6px; justify-content: center; margin-top: 5px;")
+                form(action=`/produtos/${produto.referencia}/repor` method="POST" style="margin: 0; padding: 0;")
+                  input(type="hidden" name="quantidade" value="1")
+                  button(type="submit" style="padding: 0.4rem 0.8rem; background-color: #747d8c; color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;") Repor
+                form(action=`/produtos/${produto.referencia}/inativar` method="POST" style="margin: 0; padding: 0;")
+                  button(type="submit" style="padding: 0.4rem 0.8rem; background-color: var(--accent); color: white; border: none; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;")= produto.ativo ? "Inativar" : "Ativar"
     else
-      p.msg-vazia Nenhuma peça encontrada no catálogo.
+      p.msg-vazia Nenhuma peca encontrada no catalogo.

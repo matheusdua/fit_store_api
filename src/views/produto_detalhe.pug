@@ -6,6 +6,9 @@ block content
       h2= produto.nome
       p.ref-destaque Referência: #{ produto.referencia }
 
+      if error
+        .badge-esgotado(style="padding: 0.8rem; margin-bottom: 1.5rem; border-radius: 6px; display: block; text-align: center; background-color: var(--accent); color: white; width: 100%; box-sizing: border-box;") #{error}
+
       .info-valores
         h3 R$ #{ produto.preco }
 
@@ -17,7 +20,22 @@ block content
       if produto.ativo === false
         p.badge-inativo Este produto está desativado no sistema.
 
-      p.autor-id(style="color: gray; font-size: 0.9em; margin-top: 15px") Criado por: #{ produto.nomeAutor }
+      if cargoUsuario === 'gerente' || cargoUsuario === 'vendedor' || cargoUsuario === 'estagiario'
+        p.autor-id(style="color: #747d8c; font-size: 0.85em; margin-top: 25px; border-top: 1px dashed #ccc; padding-top: 15px;") Auditoria de Registro: Criado por #[strong= produto.nomeAutor]
 
-      .acoes-detalhe
-        a.btn-voltar(href="/vitrine") &larr; Voltar para a Vitrine
+      if cargoUsuario === 'gerente'
+        .gerente-detalhe-actions(style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;")
+          h4(style="margin-top: 0; color: var(--primary); margin-bottom: 1rem;") 🛠️ Painel de Controle Administrativo
+          .botoes-grupo(style="display: flex; gap: 10px;")
+            form(action=`/produtos/${produto.referencia}/repor` method="POST" style="margin: 0; padding: 0;")
+              input(type="hidden" name="quantidade" value="1")
+              button(type="submit" style="padding: 0.6rem 1.5rem; background-color: #747d8c; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;") Repor Estoque (+1)
+            form(action=`/produtos/${produto.referencia}/inativar` method="POST" style="margin: 0; padding: 0;")
+              button(type="submit" style="padding: 0.6rem 1.5rem; background-color: var(--accent); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;")= produto.ativo ? "Inativar Produto" : "Ativar Produto"
+
+      .acoes-detalhe(style="margin-top: 2rem; display: flex; gap: 15px; align-items: center;")
+        if (!cargoUsuario || cargoUsuario === 'cliente') && produto.ativo !== false && produto.estoque > 0
+          form(action=`/produtos/${produto.referencia}/comprar` method="POST" style="margin: 0; padding: 0;")
+            input(type="hidden" name="quantidade" value="1")
+            button.btn-comprar(type="submit" style="padding: 0.8rem 2rem; background-color: var(--success); color: var(--white); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;") Confirmar Compra
+        a.btn-voltar(href="/vitrine" style="margin-top: 0;") &larr; Voltar para a Vitrine

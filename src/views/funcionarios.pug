@@ -2,22 +2,43 @@ extends layouts/main.pug
 
 block content
   .equipe-container
-    h1 Gestão de Equipe
+    h1(style="margin-bottom: 5px;") Gestão de Controle Administrativo
+    p(style="color: #747d8c; margin-bottom: 2.5rem;") Auditoria geral de credenciais, permissões e contas de usuários da FitStore.
 
-    table(style="width: 100%; border-collapse: collapse; margin-top: 20px")
+    h2(style="font-size: 1.3rem; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 1rem;") 🦺 Corpo Tecnico Operacional
+    table(style="width: 100%; border-collapse: collapse; margin-bottom: 3rem; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);")
       thead
-        tr(style="background-color: #f4f4f4")
-          th ID
+        tr(style="background-color: #f4f4f4; height: 40px; color: var(--text);")
+          th Username
           th Nome
-          th Cargo
-          th Status
+          th Cargo de Acesso
+          th Estado
       tbody
         each f in usuarios
-          tr(style="border-bottom: 1px solid #ddd; text-align: center")
-            td= f.id
-            td= f.nome
-            td= f.cargo
-            td= f.ativo ? "Ativo" : "Inativo"
+          if f.cargo === 'gerente' || f.cargo === 'vendedor' || f.cargo === 'estagiario'
+            tr(style="border-bottom: 1px solid #eee; text-align: center; height: 45px;")
+              td(style="font-family: monospace; font-weight: bold; color: var(--primary);")= f.username || 'legado'
+              td= f.nome
+              td
+                span(style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; background: #e3edf7; color: #31708f;")= f.cargo
+              td(style="font-weight: 500; color: f.ativo ? var(--success) : var(--accent);")= f.ativo ? "Ativo" : "Inativo"
 
-    .acoes-web
-      a.btn-voltar(href="/") Voltar para Home
+    h2(style="font-size: 1.3rem; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 1rem;") 👥 Clientes Cadastrados (E-commerce)
+    table(style="width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);")
+      thead
+        tr(style="background-color: #f4f4f4; height: 40px; color: var(--text);")
+          th Username
+          th Nome de Cadastro
+          th E-mail de Contato
+          th Estado
+      tbody
+        each f in usuarios
+          if f.cargo === 'cliente'
+            tr(style="border-bottom: 1px solid #eee; text-align: center; height: 45px;")
+              td(style="font-family: monospace; color: #747d8c;")= f.username
+              td= f.nome
+              td(style="color: #57606f;")= f.email
+              td(style="font-weight: 500; color: f.ativo ? var(--success) : var(--accent);")= f.ativo ? "Ativo" : "Inativo"
+
+    .acoes-web(style="margin-top: 2.5rem;")
+      a.btn-voltar(href="/vitrine") &larr; Voltar para a Vitrine
