@@ -28,7 +28,7 @@ export const verificarToken = (req, res, next) => {
             return res.status(401).json({ erro: "Token inválido ou expirado." });
         }
 
-        req.usuarioAutenticado = decoded.id;
+        req.usernameAutenticado = decoded.username;
         req.cargoAutenticado = decoded.cargo;
 
         next();
@@ -46,4 +46,24 @@ export const apenasCargos = (cargosPermitidos) => {
         }
         next();
     };
+
+};
+
+export const coletarCargoOpcional = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return next();
+
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2) return next();
+
+    const [scheme, token] = parts;
+    if (!/^Bearer$/i.test(scheme)) return next();
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (!err) {
+            req.usernameAutenticado = decoded.username;
+            req.cargoAutenticado = decoded.cargo;
+        }
+        next();
+    });
 };
