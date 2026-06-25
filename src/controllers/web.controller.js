@@ -111,6 +111,23 @@ class WebController {
         }
     }
 
+    static exibirRegister(req, res) {
+        res.render('register', { title: 'Criar Conta - FitStore', erro: req.query.erro });
+    }
+
+    static async processarRegister(req, res) {
+        try {
+            // Executa o servico core de criacao de conta (Nasce como cliente por padrao)
+            await AuthService.register(req.body, req.cargoAutenticado);
+
+            // Redireciona para a tela de login apos o cadastro bem-sucedido
+            res.redirect('/login');
+        } catch (error) {
+            console.error(error);
+            res.redirect('/register?erro=' + encodeURIComponent(error.message || 'Erro ao criar conta'));
+        }
+    }
+
     static exibirCadastroProduto(req, res) {
         res.render('produto_novo', {
             title: 'Novo Produto - FitStore',
@@ -122,7 +139,6 @@ class WebController {
 
     static async processarCadastroProduto(req, res) {
         try {
-            // Conversao de tipos primitivos para conformidade com os validadores core
             if (req.body.preco) req.body.preco = Number(req.body.preco);
             if (req.body.estoque) req.body.estoque = parseInt(req.body.estoque) || 0;
 
@@ -193,6 +209,22 @@ class WebController {
     static async processarInativarWeb(req, res) {
         const { referencia } = req.params;
         try {
+            const prodRaw = await ProdutoModel.findOne({ referencia: referencia.toUpperCase() });
+
+            if (!prodRaw) {
+                throw new Error('Produto nao encontrado na base para alteracao.');
+            }
+
+            if (prodRaw.ativo === false) {
+                await ProdutoModel.updateOne({ _id: prodRaw._id }, { $set: { ativo: true } });
+
+                const origemDetalhe = req.headers.referer && req.headers.referer.includes('/vitrine/');
+                if (origemDetalhe) {
+                    return res.redirect(`/vitrine/${referencia}`);
+                }
+                return res.redirect('/vitrine');
+            }
+
             let erroController = null;
 
             const fakeRes = {
@@ -204,8 +236,8 @@ class WebController {
             await ProdutoController.inativar(req, fakeRes, (err) => { if (err) erroController = err.message || err; });
             if (erroController) throw new Error(erroController);
 
-            const originHeader = req.headers.referer && req.headers.referer.includes('/vitrine/');
-            if (originHeader) {
+            const origemDetalhe = req.headers.referer && req.headers.referer.includes('/vitrine/');
+            if (origemDetalhe) {
                 return res.redirect(`/vitrine/${referencia}`);
             }
             res.redirect('/vitrine');

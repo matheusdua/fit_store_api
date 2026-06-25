@@ -10,6 +10,9 @@ router.get('/vitrine/:referencia', coletarCargoOpcional, WebController.listarPro
 router.get('/login', WebController.exibirLogin);
 router.post('/login', WebController.processarLogin);
 
+router.get('/register', WebController.exibirRegister);
+router.post('/register', WebController.processarRegister);
+
 router.get('/produtos/novo', verificarToken, apenasCargos(['gerente', 'vendedor']), WebController.exibirCadastroProduto);
 router.post('/produtos/novo', verificarToken, apenasCargos(['gerente', 'vendedor']), WebController.processarCadastroProduto);
 
