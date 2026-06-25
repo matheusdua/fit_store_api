@@ -19,6 +19,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.3.0",
     "mongoose": "^9.7.0",
-    "pug": "^3.0.4"
+    "pug": "^3.0.4",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
   }
 }

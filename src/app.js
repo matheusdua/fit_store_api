@@ -1,8 +1,11 @@
-import 'dotenv/config'; 
+import 'dotenv/config';
 
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger.js';
 
 import authRoutes from './routes/auth.routes.js';
 import produtoRoutes from './routes/produto.routes.js';
@@ -16,12 +19,15 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(logger);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/auth', authRoutes);
 app.use('/api', produtoRoutes);
