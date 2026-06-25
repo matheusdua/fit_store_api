@@ -2,28 +2,34 @@ import ProdutoRepository from '../repositories/produto.repository.js';
 import { ProdutoResponseDTO } from '../dtos/produto.dto.js';
 
 class ProdutoService {
-    static async getAll(busca = '') {
+    static async getAll(busca = '', cargoSolicitante = '') {
         const produtos = await ProdutoRepository.findAll();
         let filtrados = produtos;
 
+        if (cargoSolicitante !== 'gerente') {
+            filtrados = filtrados.filter(p => p.ativo !== false);
+        }
+
         if (busca) {
             const termo = busca.toLowerCase();
-            filtrados = produtos.filter(p =>
+            filtrados = filtrados.filter(p =>
                 p.nome.toLowerCase().includes(termo) ||
                 p.referencia.toLowerCase().includes(termo)
             );
         }
 
-        filtrados.sort((a, b) => {
-            if (a.ativo === b.ativo) return 0;
-            return a.ativo ? -1 : 1;
-        });
+        if (cargoSolicitante === 'gerente') {
+            filtrados.sort((a, b) => {
+                if (a.ativo === b.ativo) return 0;
+                return a.ativo ? -1 : 1;
+            });
+        }
 
         return filtrados.map(p => new ProdutoResponseDTO(p));
     }
 
-    static async getById(id) {
-        const produto = await ProdutoRepository.findById(id);
+    static async getByReferencia(referencia) {
+        const produto = await ProdutoRepository.findByReferencia(referencia);
 
         if (!produto) {
             const error = new Error('Produto não encontrado');
@@ -34,16 +40,16 @@ class ProdutoService {
         return new ProdutoResponseDTO(produto);
     }
 
-    static async create(dados, idSolicitante) {
-        const produtos = await ProdutoRepository.findAll();
-
-        const referenciaExiste = produtos.find(p => p.referencia === dados.referencia);
+    static async create(dados, usernameSolicitante) {
+        dados.referencia = dados.referencia.toUpperCase();
+        const referenciaExiste = await ProdutoRepository.findByReferencia(dados.referencia);
         if (referenciaExiste) {
             const error = new Error('Já existe um produto com esta referência');
             error.statusCode = 409;
             throw error;
         }
 
+        const produtos = await ProdutoRepository.findAll();
         const nomeExiste = produtos.find(p => p.nome.toLowerCase() === dados.nome.toLowerCase());
         if (nomeExiste) {
             const error = new Error('Já existe um produto com este nome');
@@ -51,15 +57,15 @@ class ProdutoService {
             throw error;
         }
 
-        dados.cadastradoPor = idSolicitante;
+        dados.cadastradoPor = usernameSolicitante;
 
         const novoProduto = await ProdutoRepository.create(dados);
         return new ProdutoResponseDTO(novoProduto);
     }
 
 
-    static async update(id, dados) {
-        const produtoAtual = await ProdutoRepository.findById(id);
+    static async updateByReferencia(referencia, dados) {
+        const produtoAtual = await ProdutoRepository.findByReferencia(referencia);
 
         if (!produtoAtual) {
             const error = new Error('Produto não encontrado');
@@ -68,9 +74,9 @@ class ProdutoService {
         }
 
         if (dados.referencia) {
-            const produtos = await ProdutoRepository.findAll();
-            const conflito = produtos.find(p => p.referencia === dados.referencia && p.id !== id);
-            if (conflito) {
+            dados.referencia = dados.referencia.toUpperCase();
+            const conflito = await ProdutoRepository.findByReferencia(dados.referencia);
+            if (conflito && conflito.id !== produtoAtual.id) {
                 const error = new Error('Referência já em uso por outro produto');
                 error.statusCode = 409;
                 throw error;
@@ -79,12 +85,12 @@ class ProdutoService {
 
         delete dados.id;
 
-        const produtoAtualizado = await ProdutoRepository.replace(id, dados);
+        const produtoAtualizado = await ProdutoRepository.replace(produtoAtual.id, dados);
         return new ProdutoResponseDTO(produtoAtualizado);
     }
 
-    static async venderProduto(id, quantidade) {
-        const produto = await ProdutoRepository.findById(id);
+    static async venderProdutoByReferencia(referencia, quantidade) {
+        const produto = await ProdutoRepository.findByReferencia(referencia);
 
         if (!produto) {
             const error = new Error('Produto não encontrado');
@@ -105,13 +111,13 @@ class ProdutoService {
         }
 
         const novoEstoque = produto.estoque - quantidade;
-        const produtoAtualizado = await ProdutoRepository.partialUpdate(id, { estoque: novoEstoque });
+        const produtoAtualizado = await ProdutoRepository.partialUpdate(produto.id, { estoque: novoEstoque });
 
         return new ProdutoResponseDTO(produtoAtualizado);
     }
 
-    static async reporEstoque(id, quantidade) {
-        const produto = await ProdutoRepository.findById(id);
+    static async reporEstoqueByReferencia(referencia, quantidade) {
+        const produto = await ProdutoRepository.findByReferencia(referencia);
 
         if (!produto) {
             const error = new Error('Produto não encontrado');
@@ -120,13 +126,13 @@ class ProdutoService {
         }
 
         const novoEstoque = produto.estoque + quantidade;
-        const produtoAtualizado = await ProdutoRepository.partialUpdate(id, { estoque: novoEstoque });
+        const produtoAtualizado = await ProdutoRepository.partialUpdate(produto.id, { estoque: novoEstoque });
 
         return new ProdutoResponseDTO(produtoAtualizado);
     }
 
-    static async inativarProduto(id) {
-        const produto = await ProdutoRepository.findById(id);
+    static async inativarProdutoByReferencia(referencia) {
+        const produto = await ProdutoRepository.findByReferencia(referencia);
 
         if (!produto) {
             const error = new Error('Produto não encontrado');
@@ -134,19 +140,20 @@ class ProdutoService {
             throw error;
         }
 
-        const produtoAtualizado = await ProdutoRepository.partialUpdate(id, { ativo: false });
+        const produtoAtualizado = await ProdutoRepository.partialUpdate(produto.id, { ativo: false });
         return new ProdutoResponseDTO(produtoAtualizado);
     }
 
-    static async delete(id) {
-        const deletado = await ProdutoRepository.delete(id);
+    static async deleteByReferencia(referencia) {
+        const produto = await ProdutoRepository.findByReferencia(referencia);
 
-        if (!deletado) {
+        if (!produto) {
             const error = new Error('Produto não encontrado');
             error.statusCode = 404;
             throw error;
         }
 
+        await ProdutoRepository.delete(produto.id);
         return true;
     }
 }

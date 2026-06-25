@@ -40,6 +40,35 @@ class ProdutoRepository {
         const result = await Produto.findByIdAndDelete(id);
         return result !== null;
     }
+
+    static async findByReferencia(referencia) {
+        const produto = await Produto.findOne({ referencia: referencia.toUpperCase() });
+        return toJSON(produto);
+    }
+
+    static async replaceByReferencia(referencia, produtoData) {
+        const result = await Produto.findOneAndReplace(
+            { referencia: referencia.toUpperCase() },
+            produtoData,
+            { returnDocument: 'after' }
+        );
+        return toJSON(result);
+    }
+
+    static async partialUpdateByReferencia(referencia, produtoData) {
+        const result = await Produto.findOneAndUpdate(
+            { referencia: referencia.toUpperCase() },
+            { $set: produtoData },
+            { returnDocument: 'after' }
+        );
+        return toJSON(result);
+    }
+
+    static async deleteByReferencia(referencia) {
+        const result = await Produto.findOneAndDelete({ referencia: referencia.toUpperCase() });
+        return result !== null;
+    }
+
 }
 
 export default ProdutoRepository;

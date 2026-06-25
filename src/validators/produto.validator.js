@@ -30,9 +30,10 @@ export const regrasValidacaoProduto = [
     verificarErros
 ];
 
-export const regrasValidacaoID = [
-    param('id')
-        .isMongoId().withMessage('O ID da URL não é um formato válido do MongoDB.'),
+export const regrasValidacaoReferencia = [
+    param('referencia')
+        .trim()
+        .notEmpty().withMessage('A referência do produto na URL é obrigatória.'),
     verificarErros
 ];
 
